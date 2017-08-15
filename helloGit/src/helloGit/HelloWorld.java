@@ -13,6 +13,7 @@ public class HelloWorld {
 		int i=0;
 		int j=i++;
 		System.out.println(j);
+		System.out.println("新内容提交!");
 
 	}
 }
