@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.deploy.net.HttpResponse;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.web.util.WebUtils;
@@ -30,6 +31,7 @@ import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.sys.security.FormAuthenticationFilter;
 import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm.Principal;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 登录Controller
@@ -222,5 +224,11 @@ public class LoginController extends BaseController{
 			loginFailMap.remove(useruame);
 		}
 		return loginFailNum >= 3;
+	}
+	@RequestMapping("/hello")
+	@ResponseBody
+	public void test(HttpServletRequest request, HttpServletResponse response){
+
+		System.out.println();
 	}
 }
