@@ -1,6 +1,3 @@
-/**
- * Copyright &copy; 2012-2016 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
- */
 package com.thinkgem.jeesite.common.utils.excel;
 
 import java.io.FileNotFoundException;
@@ -22,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -42,7 +40,6 @@ import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
 
 /**
  * 导出Excel文件（导出“XLSX”格式，支持大数据量导出   @see org.apache.poi.ss.SpreadsheetVersion）
- * @author ThinkGem
  * @version 2013-04-21
  */
 public class ExportExcel {
@@ -84,11 +81,11 @@ public class ExportExcel {
 	}
 	
 	/**
-	 * 构造函数
+	 * 构造函数--作用扫描注解获取表格标题header
 	 * @param title 表格标题，传“空值”，表示无标题
 	 * @param cls 实体对象，通过annotation.ExportField获取标题
-	 * @param type 导出类型（1:导出数据；2：导出模板）
-	 * @param groups 导入分组
+	 * @param type 导出类型（1:导出数据；2：导出模板）???
+	 * @param groups 导入分组 只导出分组内的数据
 	 */
 	public ExportExcel(String title, Class<?> cls, int type, int... groups){
 		// Get annotation field 
@@ -139,14 +136,14 @@ public class ExportExcel {
 				}
 			}
 		}
-		// Field sorting
+		// Field sorting 排序Excel导出显示顺序
 		Collections.sort(annotationList, new Comparator<Object[]>() {
 			public int compare(Object[] o1, Object[] o2) {
 				return new Integer(((ExcelField)o1[0]).sort()).compareTo(
 						new Integer(((ExcelField)o2[0]).sort()));
 			};
 		});
-		// Initialize
+		//获取tittle 
 		List<String> headerList = Lists.newArrayList();
 		for (Object[] os : annotationList){
 			String t = ((ExcelField)os[0]).title();
@@ -159,6 +156,7 @@ public class ExportExcel {
 			}
 			headerList.add(t);
 		}
+		// Initialize
 		initialize(title, headerList);
 	}
 	
@@ -181,13 +179,13 @@ public class ExportExcel {
 	}
 	
 	/**
-	 * 初始化函数
+	 * 初始化函数--作用在sheet0创建表格,设置表头及样式
 	 * @param title 表格标题，传“空值”，表示无标题
 	 * @param headerList 表头列表
 	 */
 	private void initialize(String title, List<String> headerList) {
 		this.wb = new SXSSFWorkbook(500);
-		this.sheet = wb.createSheet("Export");
+		this.sheet = wb.createSheet("sheet0");
 		this.styles = createStyles(wb);
 		// Create title
 		if (StringUtils.isNotBlank(title)){
@@ -196,6 +194,7 @@ public class ExportExcel {
 			Cell titleCell = titleRow.createCell(0);
 			titleCell.setCellStyle(styles.get("title"));
 			titleCell.setCellValue(title);
+			//表头居中对齐
 			sheet.addMergedRegion(new CellRangeAddress(titleRow.getRowNum(),
 					titleRow.getRowNum(), titleRow.getRowNum(), headerList.size()-1));
 		}
@@ -212,13 +211,14 @@ public class ExportExcel {
 			if (ss.length==2){
 				cell.setCellValue(ss[0]);
 				Comment comment = this.sheet.createDrawingPatriarch().createCellComment(
+						//批注对象 ***注意***SXSSFWorkbook对象对批注支持不很好,如果要使用批注需换成XSSFWorkbook对象,XSSFWorkbook对象没有wb.dispose()方法;
 						new XSSFClientAnchor(0, 0, 0, 0, (short) 3, 3, (short) 5, 6));
 				comment.setString(new XSSFRichTextString(ss[1]));
 				cell.setCellComment(comment);
 			}else{
 				cell.setCellValue(headerList.get(i));
 			}
-			sheet.autoSizeColumn(i);
+			sheet.autoSizeColumn(i);//自动调整列宽
 		}
 		for (int i = 0; i < headerList.size(); i++) {  
 			int colWidth = sheet.getColumnWidth(i)*2;
@@ -236,14 +236,14 @@ public class ExportExcel {
 		Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
 		
 		CellStyle style = wb.createCellStyle();
-		style.setAlignment(CellStyle.ALIGN_CENTER);
-		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER);//水平居中
+		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//垂直居中
 		Font titleFont = wb.createFont();
 		titleFont.setFontName("Arial");
 		titleFont.setFontHeightInPoints((short) 16);
 		titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		style.setFont(titleFont);
-		styles.put("title", style);
+		styles.put("title", style);//设置标题样式
 
 		style = wb.createCellStyle();
 		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
@@ -259,28 +259,28 @@ public class ExportExcel {
 		dataFont.setFontName("Arial");
 		dataFont.setFontHeightInPoints((short) 10);
 		style.setFont(dataFont);
-		styles.put("data", style);
+		styles.put("data", style);//设置内容样式
 		
 		style = wb.createCellStyle();
 		style.cloneStyleFrom(styles.get("data"));
 		style.setAlignment(CellStyle.ALIGN_LEFT);
-		styles.put("data1", style);
+		styles.put("data1", style);//设置内容样式--左对齐
 
 		style = wb.createCellStyle();
 		style.cloneStyleFrom(styles.get("data"));
 		style.setAlignment(CellStyle.ALIGN_CENTER);
-		styles.put("data2", style);
+		styles.put("data2", style);//设置内容样式--居中
 
 		style = wb.createCellStyle();
 		style.cloneStyleFrom(styles.get("data"));
 		style.setAlignment(CellStyle.ALIGN_RIGHT);
-		styles.put("data3", style);
+		styles.put("data3", style);//设置内容样式--右对齐
 		
 		style = wb.createCellStyle();
 		style.cloneStyleFrom(styles.get("data"));
 //		style.setWrapText(true);
 		style.setAlignment(CellStyle.ALIGN_CENTER);
-		style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+		style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());//设置背景色
 		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		Font headerFont = wb.createFont();
 		headerFont.setFontName("Arial");
@@ -288,7 +288,7 @@ public class ExportExcel {
 		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		headerFont.setColor(IndexedColors.WHITE.getIndex());
 		style.setFont(headerFont);
-		styles.put("header", style);
+		styles.put("header", style);//设置标题样式
 		
 		return styles;
 	}
@@ -328,6 +328,7 @@ public class ExportExcel {
 			if(val == null){
 				cell.setCellValue("");
 			}else if(fieldType != Class.class){
+				//如果指定了反射类型,获取该反射类型中setValue方法返回的数据值,string类型
 				cell.setCellValue((String)fieldType.getMethod("setValue", Object.class).invoke(null, val));
 			}else{
 				if(val instanceof String) {
@@ -348,6 +349,7 @@ public class ExportExcel {
 					cell.setCellValue((Date) val);
 					cellFormatString = "yyyy-MM-dd HH:mm";
 				}else {
+					//自定义的
 					cell.setCellValue((String)Class.forName(this.getClass().getName().replaceAll(this.getClass().getSimpleName(), 
 						"fieldtype."+val.getClass().getSimpleName()+"Type")).getMethod("setValue", Object.class).invoke(null, val));
 				}
@@ -371,6 +373,7 @@ public class ExportExcel {
 
 	/**
 	 * 添加数据（通过annotation.ExportField添加数据）
+	 * 使用反射获取集合中对象的属性值
 	 * @return list 数据列表
 	 */
 	public <E> ExportExcel setDataList(List<E> list){
@@ -392,15 +395,16 @@ public class ExportExcel {
 							val = Reflections.invokeMethod(e, ((Method)os[1]).getName(), new Class[] {}, new Object[] {});
 						}
 					}
-					// If is dict, get dict label
+					// If is dict, get dict label 从字典表获取字典类型值对应的label
 					if (StringUtils.isNotBlank(ef.dictType())){
 						val = DictUtils.getDictLabel(val==null?"":val.toString(), ef.dictType(), "");
 					}
 				}catch(Exception ex) {
-					// Failure to ignore
+					// Failure to ignore有异常打印设置
 					log.info(ex.toString());
 					val = "";
 				}
+				//增加单元格 按照数据类型设置单元格格式
 				this.addCell(row, colunm++, val, ef.align(), ef.fieldType());
 				sb.append(val + ", ");
 			}
@@ -419,7 +423,7 @@ public class ExportExcel {
 	}
 	
 	/**
-	 * 输出到客户端
+	 * 输出到客户端 输出到response
 	 * @param fileName 输出文件名
 	 */
 	public ExportExcel write(HttpServletResponse response, String fileName) throws IOException{
@@ -431,7 +435,7 @@ public class ExportExcel {
 	}
 	
 	/**
-	 * 输出到文件
+	 * 输出到文件  需指定文件位置
 	 * @param fileName 输出文件名
 	 */
 	public ExportExcel writeFile(String name) throws FileNotFoundException, IOException{
@@ -448,41 +452,103 @@ public class ExportExcel {
 		return this;
 	}
 	
-//	/**
-//	 * 导出测试
-//	 */
-//	public static void main(String[] args) throws Throwable {
-//		
-//		List<String> headerList = Lists.newArrayList();
-//		for (int i = 1; i <= 10; i++) {
-//			headerList.add("表头"+i);
-//		}
-//		
-//		List<String> dataRowList = Lists.newArrayList();
-//		for (int i = 1; i <= headerList.size(); i++) {
-//			dataRowList.add("数据"+i);
-//		}
-//		
-//		List<List<String>> dataList = Lists.newArrayList();
-//		for (int i = 1; i <=1000000; i++) {
-//			dataList.add(dataRowList);
-//		}
-//
-//		ExportExcel ee = new ExportExcel("表格标题", headerList);
-//		
-//		for (int i = 0; i < dataList.size(); i++) {
-//			Row row = ee.addRow();
-//			for (int j = 0; j < dataList.get(i).size(); j++) {
-//				ee.addCell(row, j, dataList.get(i).get(j));
-//			}
-//		}
-//		
-//		ee.writeFile("target/export.xlsx");
-//
-//		ee.dispose();
-//		
-//		log.debug("Export success.");
-//		
-//	}
+	/**
+	 * 导出测试
+	 */
+	/*public static void main(String[] args) throws Throwable {
+		List<String> headerList = Lists.newArrayList();
+		 new ExportExcel("表格标题", String.class,1,1,1,2,3);
+		List<String> headerList = Lists.newArrayList();
+		for (int i = 1; i <= 10; i++) {
+			headerList.add("表头"+i);
+		}
+		
+		List<String> dataRowList = Lists.newArrayList();
+		for (int i = 1; i <= headerList.size(); i++) {
+			dataRowList.add("数据"+i);
+		}
+		
+		List<List<String>> dataList = Lists.newArrayList();
+		for (int i = 1; i <=1000000; i++) {
+			dataList.add(dataRowList);
+		}
+
+		ExportExcel ee = new ExportExcel("表格标题", headerList);
+		
+		for (int i = 0; i < dataList.size(); i++) {
+			Row row = ee.addRow();
+			for (int j = 0; j < dataList.get(i).size(); j++) {
+				ee.addCell(row, j, dataList.get(i).get(j));
+			}
+		}
+		
+		ee.writeFile("target/export.xlsx");
+
+		ee.dispose();
+		
+		log.debug("Export success.");
+		
+	}*/
+	    public static void main(String[] args) throws IOException {  
+	        //1.创建一个工作簿对象  
+	    	SXSSFWorkbook wb=new SXSSFWorkbook();
+	  
+	        //2.得到一个POI的工具类  
+	  
+	        //3. 创建一个工作表  
+	        Sheet sheet = wb.createSheet("sheet0");
+	        Row createRow = sheet.createRow(1);
+	        //4.得到一个换图的对象  
+	        Drawing drawing = sheet.createDrawingPatriarch();  
+	        //5. ClientAnchor是附属在WorkSheet上的一个对象，  其固定在一个单元格的左上角和右下角.  
+//	        ClientAnchor anchor = factory.createClientAnchor();  
+	          
+	        //6. 创建一个单元格（2A单元格）  
+	        Cell cell0 = createRow.createCell(0);  
+	        //6.1. 对这个单元格设置值  
+	        cell0.setCellValue(new XSSFRichTextString("Test"));  
+	        //6.2. 对这个单元格加上注解  
+	        Comment comment0 =  drawing.createCellComment(
+					new XSSFClientAnchor(0, 0, 0, 0, (short) 3, 3, (short) 5, 6));
+	        comment0.setString(new XSSFRichTextString("Hello, World!"));  
+	        comment0.setAuthor("Apache POI");  
+	        cell0.setCellComment(comment0);  
+	          
+	        //7. 创建一个单元格（4F单元格）  
+	        Cell cell1 = createRow.createCell(5);  
+	        //7.1. 对这个单元格设置值  
+	        cell1.setCellValue("F4");  
+	        //7.2. 对这个单元格加上注解  
+	        Comment comment1 =  drawing.createCellComment(
+					new XSSFClientAnchor(0, 0, 0, 0, (short) 3, 3, (short) 5, 6));
+	        comment1.setString(new XSSFRichTextString("Hello, World!"));  
+	        comment1.setAuthor("Apache POI");  
+	        cell1.setCellComment(comment1);  
+	  
+	        /*//8. 创建一个单元格（4F单元格）  
+	        Cell cell2 = createRow.createCell(2);  
+	        cell2.setCellValue("C3");  
+	  
+	        Comment comment2 = drawing.createCellComment(anchor);  
+	        RichTextString str2 = factory.createRichTextString("XSSF can set cell comments");  
+	        //9。为注解设置字体  
+	        Font font = wb.createFont();  
+	        font.setFontName("Arial");  
+	        font.setFontHeightInPoints((short)14);  
+	        font.setBoldweight(Font.BOLDWEIGHT_BOLD);  
+	        font.setColor(IndexedColors.RED.getIndex());  
+	        str2.applyFont(font);  
+	  
+	        comment2.setString(str2);  
+	        comment2.setAuthor("Apache POI");  
+	        comment2.setColumn(2);  
+	        comment2.setRow(2);  */
+	        //10. 保存成Excel文件  
+	        String fname = "F:\\Github\\jeesite\\jeesite-master\\target\\comments.xlsx";  
+	        FileOutputStream out = new FileOutputStream(fname);  
+	        wb.write(out);  
+	        out.close();  
+	  
+	    }  
 
 }
