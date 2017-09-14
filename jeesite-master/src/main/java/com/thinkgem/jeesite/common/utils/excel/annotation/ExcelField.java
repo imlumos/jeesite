@@ -19,8 +19,10 @@ public @interface ExcelField {
 
 	/**
 	 * 导出字段名（默认调用当前字段的“get”方法，如指定导出字段为对象，请填写“对象名.对象属性”，例：“area.name”、“office.name”）
+	 * 注意要填写对象的属性字段名,不能乱填
 	 */
 	String value() default "";
+	
 	
 	/**
 	 * 导出字段标题（需要添加批注请用“**”分隔，标题**批注，仅对导出模板有效）
@@ -48,12 +50,12 @@ public @interface ExcelField {
 	String dictType() default "";
 	
 	/**
-	 * 反射类型
+	 * 反射类型   如果指定了反射类型,获取该反射类型中setValue方法返回的数据值,string类型
 	 */
 	Class<?> fieldType() default Class.class;
 	
 	/**
-	 * 字段归属组（根据分组导出导入）
+	 * 字段归属组（根据分组导出导入） 只导出分组内的列
 	 */
 	int[] groups() default {};
 }
