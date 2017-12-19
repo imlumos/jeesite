@@ -50,7 +50,7 @@ public @interface ExcelField {
 	String dictType() default "";
 	
 	/**
-	 * 反射类型   如果指定了反射类型,获取该反射类型中setValue方法返回的数据值,string类型
+	 * 反射类型   导出如果指定了反射类型,获取该反射类型中setValue方法返回的数据值,string类型
 	 */
 	Class<?> fieldType() default Class.class;
 	

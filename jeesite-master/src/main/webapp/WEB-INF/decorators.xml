@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<decorators defaultdir="/WEB-INF/views">
-	
+<decorators defaultdir="/WEB-INF/views"><!-- defaultdir：指定了装饰页面的存放路径 -->
+    <!-- 此处用来定义不需要过滤的页面 -->     
+    <excludes>     
+    </excludes>   
 	<!-- 默认装饰页面, 在需要装饰的页面增加<meta name="decorator" content="default"/> -->
 	<decorator name="blank" page="layouts/blank.jsp" />
 	<decorator name="default" page="layouts/default.jsp" />

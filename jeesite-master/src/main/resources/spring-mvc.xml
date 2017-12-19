@@ -53,6 +53,7 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
+	<!-- <bean class="com.thinkgem.jeesite.modules.sys.web.MySwaggerConfig"></bean> -->
 	
     <!-- REST中根据URL后缀自动判定Content-Type及相应的View -->
 	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">

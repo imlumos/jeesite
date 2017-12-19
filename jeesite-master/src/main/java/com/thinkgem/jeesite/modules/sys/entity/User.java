@@ -92,12 +92,13 @@ public class User extends DataEntity<User> {
 	@SupCol(isUnique="true", isHide="true")
 	@ExcelField(title="ID", type=1, align=2, sort=1)
 	public String getId() {
+		
 		return id;
 	}
 
 	@JsonIgnore
 	@NotNull(message="归属公司不能为空")
-	@ExcelField(title="归属公司", align=2, sort=20)
+	@ExcelField(title="归属公司**部门1231", align=2, sort=26)
 	public Office getCompany() {
 		return company;
 	}
@@ -110,6 +111,7 @@ public class User extends DataEntity<User> {
 	@NotNull(message="归属部门不能为空")
 	@ExcelField(title="归属部门", align=2, sort=25)
 	public Office getOffice() {
+		
 		return office;
 	}
 
@@ -178,7 +180,7 @@ public class User extends DataEntity<User> {
 		this.phone = phone;
 	}
 
-	@Length(min=0, max=200, message="手机长度必须介于 1 和 200 之间")
+	@Length(min=0, max=1, message="手机长度必须介于 1 和 200 之间")
 	@ExcelField(title="手机", align=2, sort=70)
 	public String getMobile() {
 		return mobile;

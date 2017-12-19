@@ -40,6 +40,7 @@ import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
 
 /**
  * 导出Excel文件（导出“XLSX”格式，支持大数据量导出   @see org.apache.poi.ss.SpreadsheetVersion）
+ * 注意:SXSSFWorkbook对象对批注支持不很好,如果要使用批注需换成XSSFWorkbook对象,XSSFWorkbook对象没有wb.dispose()方法;
  * @version 2013-04-21
  */
 public class ExportExcel {
@@ -194,7 +195,7 @@ public class ExportExcel {
 			Cell titleCell = titleRow.createCell(0);
 			titleCell.setCellStyle(styles.get("title"));
 			titleCell.setCellValue(title);
-			//表头居中对齐
+			//表头居中对齐(int firstRow, int lastRow, int firstCol, int lastCol)
 			sheet.addMergedRegion(new CellRangeAddress(titleRow.getRowNum(),
 					titleRow.getRowNum(), titleRow.getRowNum(), headerList.size()-1));
 		}

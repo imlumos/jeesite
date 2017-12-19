@@ -1,6 +1,3 @@
-/**
- * Copyright &copy; 2012-2016 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
- */
 package com.thinkgem.jeesite.common.utils.excel;
 
 import java.io.File;
@@ -34,7 +31,6 @@ import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
 
 /**
  * 导入Excel文件（支持“XLS”和“XLSX”格式）
- * @author ThinkGem
  * @version 2013-03-10
  */
 public class ImportExcel {
@@ -209,7 +205,7 @@ public class ImportExcel {
 	}
 	
 	/**
-	 * 获取导入数据列表
+	 * 获取导入数据列表 --作用扫描注解获取类中标有注解的属性或者方法
 	 * @param cls 导入对象类型
 	 * @param groups 导入分组
 	 */
@@ -263,7 +259,7 @@ public class ImportExcel {
 				}
 			}
 		}
-		// Field sorting
+		// Field sorting 排序Excel导出显示顺序
 		Collections.sort(annotationList, new Comparator<Object[]>() {
 			public int compare(Object[] o1, Object[] o2) {
 				return new Integer(((ExcelField)o1[0]).sort()).compareTo(
@@ -271,7 +267,7 @@ public class ImportExcel {
 			};
 		});
 		//log.debug("Import column count:"+annotationList.size());
-		// Get excel data
+		// Get excel data 获取表格的值并利用反射根据字段类型设置具体值
 		List<E> dataList = Lists.newArrayList();
 		for (int i = this.getDataRowNum(); i < this.getLastDataRowNum(); i++) {
 			E e = (E)cls.newInstance();
@@ -282,7 +278,7 @@ public class ImportExcel {
 				Object val = this.getCellValue(row, column++);
 				if (val != null){
 					ExcelField ef = (ExcelField)os[0];
-					// If is dict type, get dict value
+					// If is dict type, get dict value 从字典表获取label对应的字典值
 					if (StringUtils.isNotBlank(ef.dictType())){
 						val = DictUtils.getDictValue(val.toString(), ef.dictType(), "");
 						//log.debug("Dictionary type value: ["+i+","+colunm+"] " + val);
@@ -349,22 +345,22 @@ public class ImportExcel {
 		return dataList;
 	}
 
-//	/**
-//	 * 导入测试
-//	 */
-//	public static void main(String[] args) throws Throwable {
-//		
-//		ImportExcel ei = new ImportExcel("target/export.xlsx", 1);
-//		
-//		for (int i = ei.getDataRowNum(); i < ei.getLastDataRowNum(); i++) {
-//			Row row = ei.getRow(i);
-//			for (int j = 0; j < ei.getLastCellNum(); j++) {
-//				Object val = ei.getCellValue(row, j);
-//				System.out.print(val+", ");
-//			}
-//			System.out.print("\n");
-//		}
-//		
-//	}
+	/**
+	 * 导入测试
+	 */
+	public static void main(String[] args) throws Throwable {
+		
+		ImportExcel ei = new ImportExcel("C:\\Users\\10375\\AppData\\Local\\Temp\\%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE20170914092738.xlsx", 1);
+		
+		for (int i = ei.getDataRowNum(); i < ei.getLastDataRowNum(); i++) {
+			Row row = ei.getRow(i);
+			for (int j = 0; j < ei.getLastCellNum(); j++) {
+				Object val = ei.getCellValue(row, j);
+				System.out.print(val+", ");
+			}
+			System.out.print("\n");
+		}
+		
+	}
 
 }

@@ -8,15 +8,18 @@
 	<version>1.0.0</version>
 	<packaging>war</packaging>
 	
-	<name>JeeSite</name>
-	<url>http://thinkgem.github.com/jeesite</url>
-	<inceptionYear>2012-2016</inceptionYear>
+	<name>ssm</name>
+	<url>http://www.ilumos.cn</url>
+	<inceptionYear>2014-2018</inceptionYear>
 	
 	<!-- 项目属性 -->
 	<properties>
+	
+	
 		
 		<!-- main version setting -->
 		<spring.version>4.1.9.RELEASE</spring.version>
+		<!-- <spring.version>4.3.0.RELEASE</spring.version>-->
 		<validator.version>5.2.4.Final</validator.version>
 		<mybatis.version>3.2.8</mybatis.version>
 		<mybatis-spring.version>1.2.3</mybatis-spring.version>
@@ -598,7 +601,17 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/UserAgentUtils-1.13.jar</systemPath>
 		</dependency>
-		
+		<!-- swagger -->
+		<!-- <dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.5.0</version>
+		</dependency> -->
 		<!-- 自定义jar依赖包
 		<dependency>
 			<groupId>com.thinkgem.jeesite</groupId>
@@ -976,9 +989,9 @@
 	<!-- 开发者信息 -->
 	<developers>  
 		<developer>
-			<id>thinkgem</id>
+			<id></id>
 			<name>WangZhen</name>
-			<email>thinkgem at 163.com</email>
+			<email>ilumos at 126.com</email>
 			<roles><role>Project lead</role></roles>
 			<timezone>+8</timezone>
 		</developer>

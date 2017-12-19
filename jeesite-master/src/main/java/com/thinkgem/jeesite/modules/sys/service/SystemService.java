@@ -3,6 +3,7 @@
  */
 package com.thinkgem.jeesite.modules.sys.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.security.Digests;
@@ -49,6 +51,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public static final String HASH_ALGORITHM = "SHA-1";
 	public static final int HASH_INTERATIONS = 1024;
 	public static final int SALT_SIZE = 8;
+	private static final String Lists = null;
 	
 	@Autowired
 	private UserDao userDao;
@@ -86,6 +89,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	 */
 	public User getUserByLoginName(String loginName) {
 		return UserUtils.getByLoginName(loginName);
+		
 	}
 	
 	public Page<User> findUser(Page<User> page, User user) {
@@ -94,7 +98,15 @@ public class SystemService extends BaseService implements InitializingBean {
 		// 设置分页参数
 		user.setPage(page);
 		// 执行分页查询
-		page.setList(userDao.findList(user));
+		List<User> findList = userDao.findList(user);
+		for (User user2 : findList) {
+			List<Role>list=new ArrayList<Role>();
+			Role role=new Role();
+			role.setName("hhhh");
+			list.add(role);
+			user2.setRoleList(list);
+		}
+		page.setList(findList);
 		return page;
 	}
 	
@@ -402,7 +414,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	public static boolean printKeyLoadMessage(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("\r\n======================================================================\r\n");
-		sb.append("\r\n    欢迎使用 "+Global.getConfig("productName")+"  - Powered By http://jeesite.com\r\n");
+		sb.append("\r\n    欢迎使用 "+Global.getConfig("productName")+"  - Powered By http://www.ilumos.cn\r\n");
 		sb.append("\r\n======================================================================\r\n");
 		System.out.println(sb.toString());
 		return true;

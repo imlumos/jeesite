@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
@@ -70,6 +71,7 @@ public class UserController extends BaseController {
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
         model.addAttribute("page", page);
+        
 		return "modules/sys/userList";
 	}
 	
@@ -124,6 +126,7 @@ public class UserController extends BaseController {
 				roleList.add(r);
 			}
 		}
+		
 		user.setRoleList(roleList);
 		// 保存用户信息
 		systemService.saveUser(user);
@@ -168,7 +171,7 @@ public class UserController extends BaseController {
 		try {
             String fileName = "用户数据"+DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
             Page<User> page = systemService.findUser(new Page<User>(request, response, -1), user);
-    		new ExportExcel("用户数据", User.class).setDataList(page.getList()).write(response, fileName).dispose();
+    		new ExportExcel("用户数据", User.class).setDataList(page.getList()).write(response, fileName).dispose();//setDataList(page.getList()).
     		return null;
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导出用户失败！失败信息："+e.getMessage());

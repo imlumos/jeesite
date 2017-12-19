@@ -6,5 +6,5 @@ package com.thinkgem.jeesite.common.beanvalidator;
  *
  */
 public interface AddGroup {
-
+    
 }

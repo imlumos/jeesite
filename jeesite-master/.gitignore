@@ -1,1 +1,10 @@
 /target/
+/.settings/
+/.classpath
+/.gitignore
+/.project
+/rebel.xml
+/README.md
+/bin/
+/db/
+/doc/

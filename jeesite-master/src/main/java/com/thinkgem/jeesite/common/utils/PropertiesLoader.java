@@ -133,7 +133,7 @@ public class PropertiesLoader {
 	 */
 	private Properties loadProperties(String... resourcesPaths) {
 		Properties props = new Properties();
-
+		
 		for (String location : resourcesPaths) {
 
 //			logger.debug("Loading properties file from:" + location);

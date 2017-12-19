@@ -80,6 +80,7 @@ public abstract class BaseController {
 			list.add(0, "数据验证失败：");
 			addMessage(model, list.toArray(new String[]{}));
 			return false;
+
 		}
 		return true;
 	}
@@ -114,7 +115,7 @@ public abstract class BaseController {
 	
 	/**
 	 * 添加Model消息
-	 * @param message
+	 * @param messages
 	 */
 	protected void addMessage(Model model, String... messages) {
 		StringBuilder sb = new StringBuilder();
